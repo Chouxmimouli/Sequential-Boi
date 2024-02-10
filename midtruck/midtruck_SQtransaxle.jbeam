@@ -1,0 +1,287 @@
+{
+"midtruck_transaxle_6M_SQ": {
+    "information":{
+        "authors":"Chouxmimouli",
+        "name":"Race 6-Speed Sequential Transmission",
+        "value":7000,
+    },
+    "slotType" : "midtruck_transmission_petrol",
+    "slots": [
+        ["type", "default","description"],
+        ["midtruck_flywheel","midtruck_flywheel","Flywheel", {"coreSlot":true}],
+        ["midtruck_propshaft","midtruck_propshaft","Propshaft"],
+    ],
+    "variables": [
+        ["name", "type", "unit", "category", "default", "min", "max", "title", "description"],
+        ["$gear_R", "range", ":1", "Transmission", 2.00, 0.5, 5, "Reverse Gear Ratio", "Torque multiplication ratio", {"stepDis":0.01}],
+        ["$gear_1", "range", ":1", "Transmission", 2.92, 0.5, 5, "1st Gear Ratio",     "Torque multiplication ratio", {"stepDis":0.01}],
+        ["$gear_2", "range", ":1", "Transmission", 2.13, 0.5, 5, "2nd Gear Ratio",     "Torque multiplication ratio", {"stepDis":0.01}],
+        ["$gear_3", "range", ":1", "Transmission", 1.67, 0.5, 5, "3rd Gear Ratio",     "Torque multiplication ratio", {"stepDis":0.01}],
+        ["$gear_4", "range", ":1", "Transmission", 1.33, 0.5, 5, "4th Gear Ratio",     "Torque multiplication ratio", {"stepDis":0.01}],
+        ["$gear_5", "range", ":1", "Transmission", 1.09, 0.5, 5, "5th Gear Ratio",     "Torque multiplication ratio", {"stepDis":0.01}],
+        ["$gear_6", "range", ":1", "Transmission", 0.85, 0.5, 5, "6th Gear Ratio",     "Torque multiplication ratio", {"stepDis":0.01}],
+    ],
+    "powertrain": [
+        ["type", "name", "inputName", "inputIndex"],
+        ["frictionClutch", "clutch", "mainEngine", 1],
+        ["sequentialGearbox", "gearbox", "clutch", 1],
+    ],
+    "gearbox": {
+        "uiName":"Gearbox",
+        "gearRatios":["$=-$gear_R", 0, "$gear_1", "$gear_2", "$gear_3", "$gear_4", "$gear_5", "$gear_6"],
+        "friction":1.822,
+        "dynamicFriction":0.00183,
+        "torqueLossCoef": 0.013,
+        "gearboxNode:":["tra1l"],
+
+        "gearWhineCoefsInput":  [0.32, 0.00, 0.32, 0.32, 0.32, 0.32, 0.32, 0.32, 0.32, 0.32],
+        "gearWhineCoefsOutput": [0.00, 0.00, 0.60, 0.60, 0.60, 0.60, 0.60, 0.60, 0.60, 0.60],
+        "gearWhineInputEvent": "event:>Vehicle>Transmission>straight_01>twine_in_race",
+        "gearWhineOutputEvent": "event:>Vehicle>Transmission>straight_01>twine_out_race",
+
+        //"forwardInputPitchCoef":1
+        //"forwardOutputPitchCoef":1
+        //"reverseInputPitchCoef":0.7
+        //"reverseOutputPitchCoef":0.7
+
+        //"gearWhineInputPitchCoefSmoothing":50
+        //"gearWhineOutputPitchCoefSmoothing":50
+        //"gearWhineInputVolumeCoefSmoothing":10
+        //"gearWhineOutputVolumeCoefSmoothing":10
+
+        //"gearWhineFixedCoefOutput": 0.7
+        //"gearWhineFixedCoefInput": 0.4
+    },
+    "clutch": {
+        "clutchFreePlay":0.75,
+        "lockSpringCoef":0.3,
+    },
+    "vehicleController": {
+        "calculateOptimalLoadShiftPoints": true,
+        "shiftDownRPMOffsetCoef":1.20,
+        "aggressionHoldOffThrottleDelay":3,
+        "lowShiftDownRPM":[0,0,0,2000,2200,2200,2200,2200],
+        "lowShiftUpRPM":[0,0,3900,3800,3700,3700,3700],
+        "clutchLaunchStartRPM": 3000,
+        "clutchLaunchTargetRPM": 2000,
+        "ignitionCutTime": 0.09
+        //"wheelSlipUpThreshold":200,
+    },
+    "flexbodies": [
+        ["mesh", "[group]:", "nonFlexMaterials"],
+        ["midtruck_transmission_petrol", ["midtruck_engine","midtruck_transmission"]],
+    ],
+    "nodes": [
+         ["id", "posX", "posY", "posZ"],
+         {"selfCollision":false},
+         {"collision":true},
+         //--5 Speed Manual-
+         {"frictionCoef":0.5},
+         {"nodeMaterial":"|NM_METAL"},
+         {"nodeWeight":6.0},
+         {"group":"midtruck_transmission"},
+         ["tra1",-0.212,-0.083,0.603],
+         ["tra2r",-0.31,-0.193,0.538],
+         ["tra2l",-0.117,-0.193,0.538],
+         ["tra3r",-0.31,-0.167,0.714],
+         ["tra3l",-0.117,-0.167,0.714],
+         {"group":""},
+    ],
+    "beams": [
+          ["id1:", "id2:"],
+          {"beamPrecompression":1, "beamType":"|NORMAL", "beamLongBound":1.0, "beamShortBound":1.0},
+          //--TRANSMISSION CONE--
+          {"beamSpring":4001000,"beamDamp":470},
+          {"beamDeform":190000,"beamStrength":"FLT_MAX"},
+          ["tra3l", "tra2l"],
+          ["tra3r", "tra2r"],
+          ["tra2r", "tra2l"],
+          ["tra3l", "tra3r"],
+          ["tra3r", "tra2l"],
+          ["tra3l", "tra2r"],
+          ["tra1", "tra2l"],
+          ["tra1", "tra3l"],
+          ["tra1", "tra2r"],
+          ["tra1", "tra3r"],
+
+          ["tra1", "e6"],
+          ["tra1", "e6r"],
+          ["tra1", "e4"],
+          ["tra1", "e4r"],
+          ["tra1", "e2"],
+          ["tra1", "e2r"],
+          ["tra1", "e4l"],
+          ["tra1", "e2l"],
+
+          ["tra2r", "e6"],
+          ["tra2r", "e6r"],
+          ["tra2r", "e4"],
+          ["tra2r", "e4r"],
+          ["tra2r", "e2"],
+          ["tra2r", "e2r"],
+          ["tra2r", "e4l"],
+          ["tra2r", "e2l"],
+
+          ["tra2l", "e6"],
+          ["tra2l", "e6r"],
+          ["tra2l", "e4"],
+          ["tra2l", "e4r"],
+          ["tra2l", "e2"],
+          ["tra2l", "e2r"],
+          ["tra2l", "e4l"],
+          ["tra2l", "e2l"],
+
+          ["tra3r", "e6"],
+          ["tra3r", "e6r"],
+          ["tra3r", "e4"],
+          ["tra3r", "e4r"],
+          ["tra3r", "e2"],
+          ["tra3r", "e2r"],
+          ["tra3r", "e4l"],
+          ["tra3r", "e2l"],
+
+          ["tra3l", "e6"],
+          ["tra3l", "e6r"],
+          ["tra3l", "e4"],
+          ["tra3l", "e4r"],
+          ["tra3l", "e2"],
+          ["tra3l", "e2r"],
+          ["tra3l", "e4l"],
+          ["tra3l", "e2l"],
+          {"beamPrecompression":1, "beamType":"|NORMAL", "beamLongBound":1.0, "beamShortBound":1.0},
+    ],
+},
+"midtruck_transaxle_6M_SQ": {
+    "information":{
+        "authors":"Chouxmimouli",
+        "name":"Race 6-Speed Sequential Transmission",
+        "value":7000,
+    },
+    "slotType" : "midtruck_transmission_diesel",
+    "slots": [
+        ["type", "default","description"],
+        ["midtruck_flywheel","midtruck_flywheel","Flywheel", {"coreSlot":true}],
+        ["midtruck_propshaft","midtruck_propshaft","Propshaft"],
+    ],
+    "variables": [
+        ["name", "type", "unit", "category", "default", "min", "max", "title", "description"],
+        ["$gear_R", "range", ":1", "Transmission", 2.00, 0.5, 5, "Reverse Gear Ratio", "Torque multiplication ratio", {"stepDis":0.01}],
+        ["$gear_1", "range", ":1", "Transmission", 2.92, 0.5, 5, "1st Gear Ratio",     "Torque multiplication ratio", {"stepDis":0.01}],
+        ["$gear_2", "range", ":1", "Transmission", 2.13, 0.5, 5, "2nd Gear Ratio",     "Torque multiplication ratio", {"stepDis":0.01}],
+        ["$gear_3", "range", ":1", "Transmission", 1.67, 0.5, 5, "3rd Gear Ratio",     "Torque multiplication ratio", {"stepDis":0.01}],
+        ["$gear_4", "range", ":1", "Transmission", 1.33, 0.5, 5, "4th Gear Ratio",     "Torque multiplication ratio", {"stepDis":0.01}],
+        ["$gear_5", "range", ":1", "Transmission", 1.09, 0.5, 5, "5th Gear Ratio",     "Torque multiplication ratio", {"stepDis":0.01}],
+        ["$gear_6", "range", ":1", "Transmission", 0.85, 0.5, 5, "6th Gear Ratio",     "Torque multiplication ratio", {"stepDis":0.01}],
+    ],
+    "powertrain": [
+        ["type", "name", "inputName", "inputIndex"],
+        ["frictionClutch", "clutch", "mainEngine", 1],
+        ["sequentialGearbox", "gearbox", "clutch", 1],
+    ],
+    "gearbox": {
+        "uiName":"Gearbox",
+        "gearRatios":["$=-$gear_R", 0, "$gear_1", "$gear_2", "$gear_3", "$gear_4", "$gear_5", "$gear_6"],
+        "friction":1.822,
+        "dynamicFriction":0.00183,
+        "torqueLossCoef": 0.013,
+        "gearboxNode:":["tra1l"],
+
+        "gearWhineCoefsInput":  [0.32, 0.00, 0.32, 0.32, 0.32, 0.32, 0.32, 0.32, 0.32, 0.32],
+        "gearWhineCoefsOutput": [0.00, 0.00, 0.60, 0.60, 0.60, 0.60, 0.60, 0.60, 0.60, 0.60],
+        "gearWhineInputEvent": "event:>Vehicle>Transmission>straight_01>twine_in_race",
+        "gearWhineOutputEvent": "event:>Vehicle>Transmission>straight_01>twine_out_race",
+
+        //"forwardInputPitchCoef":1
+        //"forwardOutputPitchCoef":1
+        //"reverseInputPitchCoef":0.7
+        //"reverseOutputPitchCoef":0.7
+
+        //"gearWhineInputPitchCoefSmoothing":50
+        //"gearWhineOutputPitchCoefSmoothing":50
+        //"gearWhineInputVolumeCoefSmoothing":10
+        //"gearWhineOutputVolumeCoefSmoothing":10
+
+        //"gearWhineFixedCoefOutput": 0.7
+        //"gearWhineFixedCoefInput": 0.4
+    },
+    "clutch": {
+        "clutchFreePlay":0.75,
+        "lockSpringCoef":0.3,
+    },
+    "vehicleController": {
+        "calculateOptimalLoadShiftPoints": true,
+        "shiftDownRPMOffsetCoef":1.20,
+        "aggressionHoldOffThrottleDelay":3,
+        "lowShiftDownRPM":[0,0,0,2000,2200,2200,2200,2200],
+        "lowShiftUpRPM":[0,0,3900,3800,3700,3700,3700],
+        "clutchLaunchStartRPM": 3000,
+        "clutchLaunchTargetRPM": 2000,
+        "ignitionCutTime": 0.09
+        //"wheelSlipUpThreshold":200,
+    },
+    "flexbodies": [
+        ["mesh", "[group]:", "nonFlexMaterials"],
+        ["midtruck_transmission_diesel", ["midtruck_engine","midtruck_transmission"]],
+    ],
+    "nodes": [
+         ["id", "posX", "posY", "posZ"],
+         {"selfCollision":false},
+         {"collision":true},
+         //--5 Speed Manual-
+         {"frictionCoef":0.5},
+         {"nodeMaterial":"|NM_METAL"},
+         {"nodeWeight":6.0},
+         {"group":"midtruck_transmission"},
+         ["tra1",-0.212,-0.083,0.603],
+         ["tra2r",-0.31,-0.193,0.538],
+         ["tra2l",-0.117,-0.193,0.538],
+         ["tra3r",-0.31,-0.167,0.714],
+         ["tra3l",-0.117,-0.167,0.714],
+         {"group":""},
+    ],
+    "beams": [
+          ["id1:", "id2:"],
+          {"beamPrecompression":1, "beamType":"|NORMAL", "beamLongBound":1.0, "beamShortBound":1.0},
+          //--TRANSMISSION CONE--
+          {"beamSpring":4001000,"beamDamp":470},
+          {"beamDeform":190000,"beamStrength":"FLT_MAX"},
+          ["tra3l", "tra2l"],
+          ["tra3r", "tra2r"],
+          ["tra2r", "tra2l"],
+          ["tra3l", "tra3r"],
+          ["tra3r", "tra2l"],
+          ["tra3l", "tra2r"],
+          ["tra1", "tra2l"],
+          ["tra1", "tra3l"],
+          ["tra1", "tra2r"],
+          ["tra1", "tra3r"],
+
+          ["tra1", "e4r"],
+          ["tra1", "e2r"],
+          ["tra1", "e4l"],
+          ["tra1", "e2l"],
+
+          ["tra2r", "e4r"],
+          ["tra2r", "e2r"],
+          ["tra2r", "e4l"],
+          ["tra2r", "e2l"],
+
+          ["tra2l", "e4r"],
+          ["tra2l", "e2r"],
+          ["tra2l", "e4l"],
+          ["tra2l", "e2l"],
+
+          ["tra3r", "e4r"],
+          ["tra3r", "e2r"],
+          ["tra3r", "e4l"],
+          ["tra3r", "e2l"],
+
+          ["tra3l", "e4r"],
+          ["tra3l", "e2r"],
+          ["tra3l", "e4l"],
+          ["tra3l", "e2l"],
+          {"beamPrecompression":1, "beamType":"|NORMAL", "beamLongBound":1.0, "beamShortBound":1.0},
+    ],
+},
+}
+    
